@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Keycodes</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <style>
+      article {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.25em;
+      }
+
+      section {
+        background: light-dark(#f1f1f1, #2b2b33);
+        border-radius: 7px;
+        padding: 0.75em;
+
+        h3 {
+          margin-top: 0;
+          font-size: 1em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Keycodes</h2>
+      </header>
+
+      <noscript>
+        <p class="placeholder-text">This tools requires Javascript to work.</p>
+      </noscript>
+
+      <article>
+        <section>
+          <h3>Key</h3>
+          <span id="event.key">—</span>
+        </section>
+
+        <section>
+          <h3>Location</h3>
+          <span id="event.location">—</span>
+        </section>
+
+        <section>
+          <h3>Code</h3>
+          <span id="event.code">—</span>
+        </section>
+
+        <section>
+          <h3>keyCode</h3>
+          <span id="event.which">—</span>
+        </section>
+      </article>
+
+      <h3>Modifiers</h3>
+
+      <kbd hidden id="ctrl">Ctrl</kbd>
+      <kbd hidden id="alt">Alt</kbd>
+      <kbd hidden id="shift">Shift</kbd>
+      <kbd hidden id="meta">⌘</kbd>
+
+      <script>
+        const locations = [
+          "General keys",
+          "Left modifier keys",
+          "Right modifier keys",
+          "Numpad"
+        ];
+
+        window.addEventListener("keydown", (event) => {
+          document.getElementById("event.key").innerText = event.key;
+          document.getElementById("event.location").innerText = locations[event.location];
+          document.getElementById("event.code").innerText = event.code;
+          document.getElementById("event.which").innerText = event.which;
+          document.getElementById("ctrl").style.display = event.ctrlKey ? "inline" : "none";
+          document.getElementById("alt").style.display = event.altKey ? "inline" : "none";
+          document.getElementById("shift").style.display = event.shiftKey ? "inline" : "none";
+          document.getElementById("meta").style.display = event.metaKey ? "inline" : "none";
+
+        });
+      </script>
+    </main>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
