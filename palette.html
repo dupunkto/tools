@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Palette</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <style>
+      .palette {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.25em;
+        margin-top: 1em;
+      }
+
+      .shade {
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        cursor: pointer;
+      }
+
+      span {
+        display: block;
+        text-align: center;
+        margin-top: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Palette</h2>
+        <div class="group">
+          <input type="number" name="count" value="25" placeholder="Size">
+          <button onclick="generate()">Generate</button>
+        </div>
+      </header>
+
+      <input type="text" name="color" value="#777" placeholder="Enter CSS color..." />
+      <section class="palette"></section>
+      <span></span>
+    </main>
+
+    <script>
+      const colorInput = document.querySelector("[name='color']");
+      const countInput = document.querySelector("[name='count']");
+
+      function generate() {
+        const color = computeColor(colorInput.value);
+        const count = countInput.value;
+
+        const palette = document.querySelector(".palette");
+        palette.innerHTML = "";
+
+        generatePalette(color, count).forEach((shade) => {
+          let color = document.createElement("div");
+          color.className = "shade";
+          color.style.backgroundColor = shade;
+          color.innerText = shade;
+          color.onclick = copy;
+          palette.appendChild(color);
+        });
+      }
+
+      function copy(e) {
+        navigator.clipboard.writeText(e.target.innerText);
+        document.querySelector("span").innerText = "Copied!";
+        window.setTimeout(() => document.querySelector("span").innerText = "", 400);
+      }
+
+      function computeColor(string) {
+        const baseColor = document.createElement("span");
+        baseColor.style.color = string;
+        document.body.appendChild(baseColor);
+        const computedColor = window.getComputedStyle(baseColor).color;
+        baseColor.remove();
+
+        return computedColor;
+      }
+
+      function generatePalette(base, count = 10) {
+        const shades = [];
+        const data = base.match(/\d+/g).map(Number);
+        const step = 0.75 * count;
+
+        // Darker shades.
+        for (let i = count/2 - 1; i > 0; i--) {
+          const factor = i / step;
+          const color = toHex({
+            r: Math.round(data[0] * (1 - factor)),
+            g: Math.round(data[1] * (1 - factor)),
+            b: Math.round(data[2] * (1 - factor))
+          });
+
+          shades.push(color);
+        }
+
+        // Add base color as middle in generated palette.
+        // shades.push(toHex({r: data[0], g: data[1], b: data[3]}));
+
+        // Lighter shades.
+        for (let i = 1; i <= count/2 + 1; i++) {
+          const factor = i / step;
+          const color = toHex({
+            r: Math.round(data[0] * (1 - factor) + 255 * factor),
+            g: Math.round(data[1] * (1 - factor) + 255 * factor),
+            b: Math.round(data[2] * (1 - factor) + 255 * factor)
+          });
+
+          shades.push(color);
+        }
+
+        return shades;
+      }
+
+      // function toRGB(hex) {
+      //   const pattern = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      //   const hex = hex.replace(pattern, function (m, r, g, b) {
+      //     return r + r + g + g + b + b;
+      //   });
+
+      //   const parsed = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+      //   if (parsed)
+      //     return {
+      //       r: parseInt(result[1], 16),
+      //       g: parseInt(result[2], 16),
+      //       b: parseInt(result[3], 16),
+      //     };
+      // }
+
+      function toHex({ r, g, b }) {
+        const encoded = ((1 << 24) + (r << 16) + (g << 8) + b)
+          .toString(16)
+          .slice(1)
+          .toUpperCase();
+
+        return `#${encoded}`;
+      }
+
+      window.onload = generate;
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
