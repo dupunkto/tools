@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Formatter</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script>
+    <script src="https://unpkg.com/terser@5.10.0/dist/bundle.min.js"></script>
+
+    <style>
+      .split {
+        margin-top: 0.5em;
+      }
+
+      textarea {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Formatter</h2>
+      </header>
+
+      <textarea placeholder="Enter code..." rows="10" cols="50"></textarea>
+
+      <div class="split">
+        <button onclick="minify()">Minify</button>
+        <button onclick="format()">Format</button>
+      </div>
+    </main>
+
+    <script>
+      const textarea = document.querySelector("textarea");
+
+      function format() {
+        const code = textarea.value;
+
+        try {
+          const formatted = prettier.format(code, {
+            parser: "babel", 
+            plugins: prettierPlugins
+          });
+
+          textarea.value = formatted;
+        } catch(e) {
+          alert(`Error: ${e.message}`);
+        }
+      }
+
+      async function minify() {
+        const code = textarea.value;
+
+        try {
+          const minified = await Terser.minify(code);
+          textarea.value = minified.code;
+        } catch(e) {
+          alert(`Error: ${e.message}`);
+        }
+      }
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
