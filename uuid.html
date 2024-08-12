@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>UUID</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <style>
+      code {
+        margin: 0.25em 0;
+        vertical-align: middle;
+        font-size: 1.3em;
+        cursor: pointer;
+      }
+
+      code:first-of-type {
+        margin-top: 1em;
+      }
+
+      section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      span {
+        display: block;
+        margin-top: 1em;
+      }
+
+      #v4::before { content: "v4" }
+      #v6::before { content: "v6" }
+
+      #v4::before, #v6::before {
+        font-family: sans-serif;
+        font-size: 0.9em;
+        background: light-dark(#f1f1f1, #2b2b33);
+        border-radius: 7px;
+        vertical-align: middle;
+        padding: 7px;
+        margin-right: 0.25em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>UUID</h2>
+        <button onclick="regenerate()">Regenerate</button>
+      </header>
+
+      <noscript>
+        <p class="placeholder-text">This tool requires Javascript to work.</p>
+      </noscript>
+
+      <section>
+        <code onclick="copy(event)" id="v4" hidden></code>
+        <code onclick="copy(event)" id="v6" hidden></code>
+
+        <span></span>
+      </section>
+    </main>
+
+    <script type="module">
+      import { v4, v6 } from 'https://unpkg.com/uuid@10.0.0/dist/esm-browser/index.js';
+
+      document.getElementById("v4").style.display = "block";
+      document.getElementById("v6").style.display = "block";
+
+      function generate() {
+        try {
+          document.getElementById("v4").innerText = self.crypto.randomUUID();
+          document.getElementById("v6").innerText = v6();
+        } catch {
+          document.getElementById("v4").innerText = v4();
+          document.getElementById("v6").innerText = v6();
+        }
+      }
+
+      function copy(e) {
+        navigator.clipboard.writeText(e.target.innerText);
+        document.querySelector("span").innerText = "Copied!";
+        window.setTimeout(() => document.querySelector("span").innerText = "", 400);
+      }
+
+      // Expose on the window
+      window.regenerate = generate;
+      window.copy = copy;
+
+      // Run first time :)
+      generate();
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
