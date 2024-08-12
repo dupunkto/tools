@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Base64</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <style>
+      .split {
+        margin-top: 0.5em;
+      }
+
+      textarea {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Base64</h2>
+      </header>
+
+      <textarea placeholder="Type something..." rows="10" cols="50"></textarea>
+
+      <div class="split">
+        <button onclick="encode()">Encode</button>
+        <button onclick="decode()">Decode</button>
+      </div>
+    </main>
+
+    <script>
+      const textarea = document.querySelector("textarea");
+
+      function encode() {
+        const encoded = encode64(textarea.value);
+        textarea.value = encoded;
+      }
+
+      async function decode() {
+        try {
+          const decoded = decode64(textarea.value);
+          textarea.value = decoded;
+        } catch(e) {
+          alert("Error: invalid base64 input.");
+        }
+      }
+
+      function encode64(input) {
+        return btoa(unescape(encodeURIComponent(input)));
+      }
+
+      function decode64(input) {
+        return decodeURIComponent(escape(window.atob(input)));
+      }
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
