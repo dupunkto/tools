@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Color</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://unpkg.com/@jaames/iro@5"></script>
+
+    <style>
+      section {
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1em;
+      }
+
+      td:first-child {
+        font-weight: bold;
+      }
+
+      .preview {
+        aspect-ratio: 5/2;
+        border-radius: 7px;
+        margin-bottom: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Colors</h2>
+        <a href="palette.html" class="button">Open in palette</a>
+      </header>
+
+      <noscript>
+        <p class="placeholder-text">This tool requires Javascript to work.</p>
+      </noscript>
+
+      <section hidden>
+        <div id="picker"></div>
+        <div>
+          <div class="preview"></div>
+          <table>
+            <tr>
+              <td>Hex</td>
+              <td class="hex8"></td>
+            </tr>
+            <tr>
+              <td>RGBa</td>
+              <td class="rgba"></td>
+            </tr>
+            <tr>
+              <td>HSLa</td>
+              <td class="hsla"></td>
+            </tr>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.querySelector("section").style.display = "grid";
+      const colorPicker = new iro.ColorPicker('#picker', {
+        layoutDirection: "vertical",
+        layout: [
+          { component: iro.ui.Box },
+          { component: iro.ui.Slider, options: { sliderType: "hue" } },
+          { component: iro.ui.Slider, options: { sliderType: "alpha" } }
+        ]
+      });
+
+      function tick(color) {
+        setColorPreview(color);
+        setTableContents(color);
+        setPaletteLink(color);
+      }
+
+      function setColorPreview(color) {
+        document.querySelector(".preview").style.background = color.hex8String;
+      }
+
+      function setTableContents(color) {
+        document.querySelector(".hex8").innerText = color.hex8String;
+        document.querySelector(".rgba").innerText = color.rgbaString;
+        document.querySelector(".hsla").innerText = color.hslaString;
+      }
+
+      function setPaletteLink(color) {
+        const link = document.querySelector("a.button");
+        link.href = link.href.split('#')[0] + color.hexString;
+      }
+
+      function maybeTick() {
+        if(location.hash) colorPicker.color.set(location.hash);
+        tick(colorPicker.color);
+      }
+
+      colorPicker.on('color:change', tick);
+      window.onload = maybeTick;
+      window.addEventListener("hashchange", maybeTick);
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
