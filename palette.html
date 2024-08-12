@@ -41,12 +41,26 @@
       <header class="bar">
         <h2>Palette</h2>
         <div class="group">
-          <input type="number" name="count" value="25" placeholder="Size">
+          <input 
+            onchange="generate()" 
+            type="number" 
+            name="count" 
+            value="25" 
+            placeholder="Size"
+          >
+
           <button onclick="generate()">Generate</button>
         </div>
       </header>
 
-      <input type="text" name="color" value="#777" placeholder="Enter CSS color..." />
+      <input 
+        onchange="generate()" 
+        type="text" 
+        name="color" 
+        value="#777" 
+        placeholder="Enter CSS color..."
+      >
+
       <section class="palette"></section>
       <span></span>
     </main>
@@ -148,7 +162,13 @@
         return `#${encoded}`;
       }
 
-      window.onload = generate;
+      function maybeRegenerate() {
+        if(location.hash) colorInput.value = location.hash;
+        generate();
+      }
+
+      window.onload = maybeRegenerate;
+      window.addEventListener("hashchange", maybeRegenerate);
     </script>
 
     <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
