@@ -347,3 +347,16 @@ textarea {
   flex-direction: row;
   justify-content: end;
 }
+
+[onclick="copy(event)"] {
+  cursor: pointer;
+}
+
+.copied {
+  display: block;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 3.5em;
+  left: 0;
+}

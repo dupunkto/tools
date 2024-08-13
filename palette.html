@@ -8,6 +8,8 @@
     <title>Palette</title>
     <link rel="stylesheet" type="text/css" href="main.css" />
 
+    <script src="copy.js"></script>
+
     <style>
       .palette {
         display: grid;
@@ -23,12 +25,6 @@
         justify-content: center;
         border-radius: 7px;
         cursor: pointer;
-      }
-
-      span {
-        display: block;
-        text-align: center;
-        margin-top: 1em;
       }
     </style>
   </head>
@@ -62,7 +58,6 @@
       >
 
       <section class="palette"></section>
-      <span></span>
     </main>
 
     <script>
@@ -81,15 +76,9 @@
           color.className = "shade";
           color.style.backgroundColor = shade;
           color.innerText = shade;
-          color.onclick = copy;
+          color.onclick = window.copy;
           palette.appendChild(color);
         });
-      }
-
-      function copy(e) {
-        navigator.clipboard.writeText(e.target.innerText);
-        document.querySelector("span").innerText = "Copied!";
-        window.setTimeout(() => document.querySelector("span").innerText = "", 400);
       }
 
       function computeColor(string) {

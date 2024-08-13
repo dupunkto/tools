@@ -8,12 +8,13 @@
     <title>UUIDs</title>
     <link rel="stylesheet" type="text/css" href="main.css">
 
+    <script src="copy.js"></script>
+
     <style>
       code {
         margin: 0.25em 0;
         vertical-align: middle;
         font-size: 1.3em;
-        cursor: pointer;
       }
 
       code:first-of-type {
@@ -25,11 +26,6 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-      }
-
-      span {
-        display: block;
-        margin-top: 1em;
       }
 
       #v4::before { content: "v4" }
@@ -64,8 +60,6 @@
       <section>
         <code onclick="copy(event)" id="v4" hidden></code>
         <code onclick="copy(event)" id="v6" hidden></code>
-
-        <span></span>
       </section>
     </main>
 
@@ -85,15 +79,8 @@
         }
       }
 
-      function copy(e) {
-        navigator.clipboard.writeText(e.target.innerText);
-        document.querySelector("span").innerText = "Copied!";
-        window.setTimeout(() => document.querySelector("span").innerText = "", 400);
-      }
-
       // Expose on the window
       window.regenerate = generate;
-      window.copy = copy;
 
       // Run first time :)
       generate();

@@ -8,6 +8,7 @@
     <title>Color</title>
     <link rel="stylesheet" type="text/css" href="main.css">
 
+    <script src="copy.js"></script>
     <script src="https://unpkg.com/@jaames/iro@5"></script>
 
     <style>
@@ -24,6 +25,11 @@
         aspect-ratio: 5/2;
         border-radius: 7px;
         margin-bottom: 0.5em;
+      }
+
+      label {
+        display: block;
+        margin-top: 1.5em;
       }
     </style>
   </head>
@@ -49,17 +55,24 @@
           <table>
             <tr>
               <td>Hex</td>
-              <td class="hex8"></td>
+              <td onclick="copy(event)" class="hex8"></td>
             </tr>
             <tr>
               <td>RGBa</td>
-              <td class="rgba"></td>
+              <td onclick="copy(event)" class="rgba"></td>
             </tr>
             <tr>
               <td>HSLa</td>
-              <td class="hsla"></td>
+              <td onclick="copy(event)" class="hsla"></td>
             </tr>
           </table>
+
+          <!-- This works, but I like the clipboard solution better:
+            <label for="color">Or, set color to:</label>
+            <input type="text" oninput="handleInput(event)" name="color" placeholder="#777"> 
+          -->
+
+          <p><kbd>Ctrl + V</kbd> to set color from clipboard.</p>
         </div>
       </section>
     </main>
@@ -102,9 +115,21 @@
         tick(colorPicker.color);
       }
 
+      function handleInput(e) {
+        colorPicker.color.set(e.target.value);
+        tick(colorPicker.color);
+      }
+
+      function handlePaste(e) {
+        const pasted = (e.clipboardData || window.clipboardData).getData("text");
+        colorPicker.color.set(pasted);
+        tick(colorPicker.color);
+      }
+
       colorPicker.on('color:change', tick);
       window.onload = maybeTick;
       window.addEventListener("hashchange", maybeTick);
+      document.addEventListener('paste', handlePaste);
     </script>
 
     <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
