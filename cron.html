@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Cron</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://unpkg.com/cronstrue@2.50.0/dist/cronstrue.js"></script>
+
+    <style>
+      .output {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 1.5em;
+        width: 100%;
+        aspect-ratio: 10/1;
+      }
+
+      .bar, h2 {
+        margin-bottom: 0;
+      }
+
+      input {
+        font-family: monospace;
+        text-align: center;
+        font-size: 2em !important;
+      }
+
+      .error:empty {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Cron</h2>
+      </header>
+
+      <p class="output">This tool requires Javascript to work.</p>
+
+      <input
+        oninput="explain()"
+        type="text"
+        name="schedule"
+        placeholder="* * * * *"
+        value="* * * * *"
+      >
+
+      <p class="error"></p>
+    </main>
+
+    <script>
+      const input = document.querySelector("input");
+      const output = document.querySelector(".output");
+      const error = document.querySelector(".error");
+
+      function explain() {
+        try {
+          error.innerText = "";
+          output.innerText = cronstrue.toString(input.value, {
+            use24HourTimeFormat: true,
+            tzOffset: 2
+          });
+        } catch(e) {
+          error.innerText = e;
+          output.innerText = "...";
+        }
+      }
+
+      explain();
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
