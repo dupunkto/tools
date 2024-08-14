@@ -13,7 +13,7 @@
     <script src="https://unpkg.com/prettier@3.3.3/plugins/estree.js"></script>
     <script src="https://unpkg.com/prettier@3.3.3/plugins/postcss.js"></script>
     <script src="https://unpkg.com/prettier@3.3.3/plugins/html.js"></script>
-    <script src="https://unpkg.com/terser@5.10.0/dist/bundle.min.js"></script>
+    <script src="https://unpkg.com/terser@5.10.0"></script>
 
     <style>
       .split {
@@ -79,10 +79,24 @@
 
       async function minify() {
         const code = textarea.value;
+        const parser = language.value;
+        let minified;
 
         try {
-          const minified = await Terser.minify(code);
-          textarea.value = minified.code;
+          switch (parser) {
+            case "babel":
+              minified = await Terser.minify(code);
+              textarea.value = minified.code;
+              break;
+
+            case "html":
+              alert("Not supported yet.");
+              break;
+
+            case "css":
+              alert("Not supported yet.");
+              break;
+          }
         } catch(e) {
           alert(`Error: ${e.message}`);
         }
