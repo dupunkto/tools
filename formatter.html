@@ -8,8 +8,11 @@
     <title>Formatter</title>
     <link rel="stylesheet" type="text/css" href="main.css">
 
-    <script src="https://unpkg.com/prettier@2.8.8/standalone.js"></script>
-    <script src="https://unpkg.com/prettier@2.8.8/parser-babel.js"></script>
+    <script src="https://unpkg.com/prettier@3.3.3/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@3.3.3/plugins/babel.js"></script>
+    <script src="https://unpkg.com/prettier@3.3.3/plugins/estree.js"></script>
+    <script src="https://unpkg.com/prettier@3.3.3/plugins/postcss.js"></script>
+    <script src="https://unpkg.com/prettier@3.3.3/plugins/html.js"></script>
     <script src="https://unpkg.com/terser@5.10.0/dist/bundle.min.js"></script>
 
     <style>
@@ -19,6 +22,11 @@
 
       textarea {
         font-family: monospace;
+      }
+
+      select {
+        width: fit-content;
+        flex-shrink: 1;
       }
     </style>
   </head>
@@ -30,6 +38,11 @@
     <main>
       <header class="bar">
         <h2>Formatter</h2>
+        <select>
+          <option value="babel" selected>Javascript</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+        </select>
       </header>
 
       <textarea placeholder="Enter code..." rows="10" cols="50"></textarea>
@@ -46,13 +59,15 @@
 
     <script>
       const textarea = document.querySelector("textarea");
+      const language = document.querySelector("select");
 
-      function format() {
+      async function format() {
         const code = textarea.value;
+        const parser = language.value;
 
         try {
-          const formatted = prettier.format(code, {
-            parser: "babel", 
+          const formatted = await prettier.format(code, {
+            parser: parser, 
             plugins: prettierPlugins
           });
 
