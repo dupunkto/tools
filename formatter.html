@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/prettier@3.3.3/plugins/postcss.js"></script>
     <script src="https://unpkg.com/prettier@3.3.3/plugins/html.js"></script>
     <script src="https://unpkg.com/terser@5.10.0"></script>
+    <script src="https://unpkg.com/csso@5.0.3/dist/csso.js"></script>
+    <script src="https://unpkg.com/html-minifier-terser@7.0.0/dist/htmlminifier.umd.bundle.min.js"></script>
 
     <style>
       .split {
@@ -90,11 +92,17 @@
               break;
 
             case "html":
-              alert("Not supported yet.");
+              textarea.value = await HTMLMinifier.minify(code, {
+                collapseWhitespace: true,
+                removeComments: true,
+                minifyCSS: true,
+                minifyJS: true,
+              });
               break;
 
             case "css":
-              alert("Not supported yet.");
+              minified = csso.minify(code);
+              textarea.value = minified.css;
               break;
           }
         } catch(e) {
