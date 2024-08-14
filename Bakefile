@@ -8,5 +8,5 @@ serve() {
 }
 
 deploy() {
-  rsync -ciavuP --delete . $REMOTE:domains/$DOMAIN/public_html/tools
+  rsync -ciavuP --delete --exclude .git . $REMOTE:domains/$DOMAIN/public_html/tools
 }
