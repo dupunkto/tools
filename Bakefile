@@ -1,12 +1,12 @@
 #!/bin/bash
 
 REMOTE=s11
-DOMAIN=code.geheimesite.nl
+DOMAIN=dupunkto.org
 
 serve() {
   waiter --dev
 }
 
 deploy() {
-  rsync -ciavuP --delete --exclude .git . $REMOTE:domains/$DOMAIN/public_html/tools
+  $DEPLOY . $REMOTE:domains/$DOMAIN/public_html/tools
 }
