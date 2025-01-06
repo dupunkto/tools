@@ -1,6 +1,5 @@
 #!/bin/bash
 
-REMOTE=s11
 DOMAIN=dupunkto.org
 
 serve() {
@@ -8,5 +7,6 @@ serve() {
 }
 
 deploy() {
-  $DEPLOY . $REMOTE:domains/$DOMAIN/public_html/tools
+  $DEPLOY . s11:domains/$DOMAIN/public_html/tools
+  $DEPLOY . nov:/volume1/www/$DOMAIN/tools
 }
