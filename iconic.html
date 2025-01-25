@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>ryto tulo</title>
+
+    <style>
+      h3 {
+        margin-bottom: 0.5em;
+      }
+
+      main > table {
+        float: right;
+        max-width: 2.5em;
+        margin-right: -4em;
+        margin-top: 2em;
+      }
+
+      main > table td:last-child {
+        text-align: right;
+        border-left: 1px solid;
+        border-color: inherit;
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>ryto tulo</h2>
+      </header>
+
+      <table></table>
+
+      <h3>fΔra</h3>
+
+      <textarea
+        class="fara"
+        placeholder="xa ryted tэku эt asy..."
+        rows="7"
+      ></textarea>
+
+      <h3>pΔra</h3>
+
+      <textarea
+        class="para"
+        readonly
+        placeholder="tΔn-ʟΔnge Δrɔm эt asy..."
+        rows="7"
+      ></textarea>
+    </main>
+
+    <script>
+      const replacements = {
+        æ: "U",
+        ɑ: "a",
+        Δ: "V",
+        ɔ: "c",
+        λ: "7",
+        э: "3",
+        Σ: "Z",
+        Ω: "O",
+        σ: "Q",
+        ȿ: "z",
+        ʟ: "l",
+        ω: "w",
+        ɥ: "j",
+      };
+
+      const table = document.querySelector("table");
+      const input = document.querySelector(".fara");
+      const output = document.querySelector(".para");
+
+      for (const grapheme in replacements) {
+        const row = document.createElement("tr");
+        const cell0 = document.createElement("td");
+        const cell1 = document.createElement("td");
+
+        cell0.innerText = grapheme;
+        cell1.innerText = replacements[grapheme];
+
+        row.appendChild(cell0);
+        row.appendChild(cell1);
+
+        table.appendChild(row);
+      }
+
+      input.oninput = () => {
+        output.value = input.value;
+
+        for (const grapheme in replacements) {
+          const seach = replacements[grapheme];
+          const replace = grapheme;
+
+          output.value = output.value.replaceAll(seach, replace);
+        }
+      };
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
