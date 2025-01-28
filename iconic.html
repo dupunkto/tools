@@ -59,7 +59,7 @@
     </main>
 
     <script>
-      const replacements = {
+      const graphemes = {
         æ: "U",
         ɑ: "a",
         ʌ: "V",
@@ -68,7 +68,7 @@
         э: "3",
         Σ: "Z",
         θ: "0",
-        σ: "Q",
+        σ: "q",
         ȿ: "z",
         ʟ: "l",
         ω: "w",
@@ -79,13 +79,13 @@
       const input = document.querySelector(".fara");
       const output = document.querySelector(".para");
 
-      for (const grapheme in replacements) {
+      for (const grapheme in graphemes) {
         const row = document.createElement("tr");
         const cell0 = document.createElement("td");
         const cell1 = document.createElement("td");
 
         cell0.innerText = grapheme;
-        cell1.innerText = replacements[grapheme];
+        cell1.innerText = graphemes[grapheme];
 
         row.appendChild(cell0);
         row.appendChild(cell1);
@@ -93,15 +93,21 @@
         table.appendChild(row);
       }
 
+      const replacements = Object.fromEntries(
+        Object.entries(graphemes).map(([key, value]) => [value, key])
+      );
+
       input.oninput = () => {
         output.value = input.value;
 
-        for (const grapheme in replacements) {
-          const seach = replacements[grapheme];
-          const replace = grapheme;
+        output.value = output.value.replace(/\\?./g, (match) => {
+          if (match.startsWith('\\')) return match.substring(1);
 
-          output.value = output.value.replaceAll(seach, replace);
-        }
+          const grapheme = match[0];
+          const replace = replacements[grapheme];
+
+          return replace ? replace : grapheme;
+        });
       };
     </script>
 
