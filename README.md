@@ -10,5 +10,4 @@ A collection of useful web-based tools for everyday (development or design) task
 - Hash tables
 - JS formatting
 
-Available at: https://code.geheimesite.nl/tools
-
+Available at: <https://dupunkto.org/tools>
