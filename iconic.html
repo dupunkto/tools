@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <title>ryto tulo</title>
 
@@ -71,7 +71,6 @@
         σ: "q",
         ȿ: "z",
         ʟ: "l",
-        ω: "w",
         ɥ: "j",
       };
 
@@ -101,7 +100,7 @@
         output.value = input.value;
 
         output.value = output.value.replace(/\\?./g, (match) => {
-          if (match.startsWith('\\')) return match.substring(1);
+          if (match.startsWith("\\")) return match.substring(1);
 
           const grapheme = match[0];
           const replace = replacements[grapheme];
@@ -111,6 +110,10 @@
       };
     </script>
 
-    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+    <script
+      src="//instant.page/5.2.0"
+      type="module"
+      integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"
+    ></script>
   </body>
 </html>
