@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>HTML preview</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <style>
+      h3 {
+        margin-bottom: 0.5em;
+      }
+
+      textarea {
+        font-family: monospace;
+      }
+
+      iframe {
+        width: 100%;
+        min-height: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>HTML preview</h2>
+      </header>
+
+      <h3>Input</h3>
+
+      <textarea placeholder="Type something..." rows="10" cols="50" id="htmlInput"></textarea>
+
+      <h3>Preview</h3>
+
+      <iframe id="preview"></iframe>
+
+      <noscript>
+        <small>This tool requires Javascript to work.</small>
+      </noscript>
+    </main>
+
+    <script>
+      const textarea = document.getElementById("htmlInput");
+      const iframe = document.getElementById("preview");
+
+      textarea.addEventListener("input", () => {
+        iframe.srcdoc = textarea.value;
+      })
+    </script>
+
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+  </body>
+</html>
