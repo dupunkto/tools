@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Font browser</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Redacted&display=swap" rel="stylesheet">
+
+    <style>
+      .section {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 1em 0;
+        gap: 0.25em;
+      }
+
+      .section h2 {
+        margin: 0;
+        padding: 0;
+        border: none;
+      }
+
+      .font-item {
+        padding: 0.7em 1em;
+        margin-bottom: 0.25em;
+        background: light-dark(#f1f1f1, #2b2b33);
+      }
+
+      .font-name {
+        font-size: 0.8em;
+        opacity: 0.7;
+        margin-bottom: 0.3em;
+      }
+
+      .font-preview {
+        font-size: var(--preview-size, 18px);
+      }
+
+      input[type="text"] {
+        margin-bottom: 2em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <input
+        name="preview"
+        type="text"
+        placeholder="The quick brown fox jumps over the lazy dog..."
+      >
+
+      <hgroup class="section">
+        <h2>Serif</h2>
+        <span id="serif-count">loading...</span>
+      </hgroup>
+
+      <ul id="serif-fonts"></ul>
+
+      <hgroup class="section">
+        <h2>Sans-Serif</h2>
+        <span id="sans-count">loading...</span>
+      </hgroup>
+
+      <ul id="sans-fonts"></ul>
+
+      <hgroup class="section">
+        <h2>Monospace</h2>
+        <span id="mono-count">loading...</span>
+      </hgroup>
+
+      <ul id="mono-fonts"></ul>
+
+      <div>
+        <div id="test-bed"></div>
+        <span id="test-baseline"></span>
+      </div>
+    </main>
+
+    <script>
+      class Browser {
+        constructor() {
+          this.fonts = { serif: [], sans: [], mono: [] };
+          this.previewText = "The quick brown fox jumps over the lazy dog";
+          
+          this.elements = {
+            previewInput: document.querySelector("input"),
+            testBed: document.getElementById("test-bed"),
+            testBaseline: document.getElementById("test-baseline"),
+            serifFonts: document.getElementById("serif-fonts"),
+            sansFonts: document.getElementById("sans-fonts"),
+            monoFonts: document.getElementById("mono-fonts"),
+            serifCount: document.getElementById("serif-count"),
+            sansCount: document.getElementById("sans-count"),
+            monoCount: document.getElementById("mono-count"),
+          };
+
+          this.elements.previewInput.input = this.previewText;
+          this.elements.previewInput.oninput = (e) => {
+            this.previewText = e.target.value || "The quick brown fox jumps over the lazy dog";
+            this.updatePreviews();
+          }
+
+          document.fonts.ready
+            .then(() => this.loadFonts())
+            .then(() => this.renderFonts());
+        }
+
+        async loadFonts() {
+          this.fonts = await fetch("fonts.json")
+            .then(r => r.json()).catch(this.getDefaultFonts());
+        }
+
+        getDefaultFonts() {
+          return {
+            serif: [
+              "Times New Roman",
+              "Times",
+              "Georgia",
+              "Garamond",
+              "Baskerville",
+              "Palatino",
+              "Cambria",
+              "Constantia",
+              "Charter",
+              "Hoefler Text",
+              "Bodoni 72",
+              "Cochin",
+              "Didot",
+              "Iowan Old Style",
+              "Marion",
+              "Palatino Linotype",
+              "PT Serif",
+              "Source Serif Pro",
+              "Liberation Serif",
+              "DejaVu Serif",
+              "Droid Serif",
+              "Noto Serif",
+              "Merriweather",
+              "Lora",
+              "Playfair Display",
+            ],
+            sans: [
+              "Arial",
+              "Helvetica",
+              "Helvetica Neue",
+              "Verdana",
+              "Tahoma",
+              "Trebuchet MS",
+              "Arial Black",
+              "Impact",
+              "Geneva",
+              "Lucida Grande",
+              "Segoe UI",
+              "Calibri",
+              "Candara",
+              "Corbel",
+              "Franklin Gothic Medium",
+              "San Francisco",
+              "SF Pro Display",
+              "SF Pro Text",
+              "Avenir",
+              "Avenir Next",
+              "Futura",
+              "Gill Sans",
+              "Optima",
+              "Rockwell",
+              "Skia",
+              "Ubuntu",
+              "Liberation Sans",
+              "DejaVu Sans",
+              "Droid Sans",
+              "Noto Sans",
+              "Source Sans Pro",
+              "Open Sans",
+              "Lato",
+              "Roboto",
+              "Inter",
+              "Poppins",
+              "Montserrat",
+              "Nunito",
+            ],
+            mono: [
+              "Courier New",
+              "Courier",
+              "Monaco",
+              "Menlo",
+              "Consolas",
+              "Andale Mono",
+              "Lucida Console",
+              "SF Mono",
+              "Cascadia Code",
+              "Cascadia Mono",
+              "JetBrains Mono",
+              "Fira Code",
+              "Fira Mono",
+              "Source Code Pro",
+              "Ubuntu Mono",
+              "Roboto Mono",
+              "Inconsolata",
+              "Liberation Mono",
+              "DejaVu Sans Mono",
+              "Droid Sans Mono",
+              "Noto Sans Mono",
+              "PT Mono",
+              "Space Mono",
+              "IBM Plex Mono",
+              "Hack",
+              "Anonymous Pro",
+            ],
+          };
+        }
+
+        renderFonts() {
+          this.renderCategory("serif", this.fonts.serif);
+          this.renderCategory("sans", this.fonts.sans);
+          this.renderCategory("mono", this.fonts.mono);
+
+          this.elements.serifCount.textContent += ' / ' + this.fonts.serif.length;
+          this.elements.sansCount.textContent += ' / ' + this.fonts.sans.length;
+          this.elements.monoCount.textContent += ' / ' + this.fonts.mono.length;
+        }
+
+        renderCategory(category, fonts) {
+          const container = this.elements[`${category}Fonts`];
+          container.innerHTML = "";
+
+          const availableFonts = fonts.filter(font => this.isAvailable(font));
+          this.elements[`${category}Count`].textContent = availableFonts.length;
+          
+          availableFonts.forEach((font) => {
+            const li = document.createElement("li");
+
+            li.className = "font-item";
+            li.innerHTML = `
+              <div class="font-name">${font}</div>
+              <div class="font-preview" style="font-family: '${font}', 'Redacted';">
+                  ${this.previewText}
+              </div>`;
+
+            container.appendChild(li);
+          });
+
+          this.elements.testBed.style.display = "none";
+          this.elements.testBaseline.style.display = "none";
+        }
+
+        isAvailable(font) {
+          this.elements.testBed.style.display = "block";
+          this.elements.testBaseline.style.display = "inline";
+
+          const testString = 'mmmmmmmmmwwwwwww';
+          const testFont = '"Redacted"';
+          const testSize = '50px';
+
+          const span = document.createElement('span');
+          const testBed = this.elements.testBed;
+          const baseline = this.elements.testBaseline;
+
+          baseline.textContent = testString;
+          span.textContent = testString;
+
+          const style = `font-size: ${testSize} !important; font-family: ${testFont};`;
+
+          testBed.style.cssText = style;
+          baseline.style.cssText = style;
+
+          span.style.cssText = `font-size: ${testSize} !important; font-family: '${font}', ${testFont}`;
+
+          this.elements.testBed.innerHTML = '';
+          this.elements.testBed.appendChild(span);
+
+          console.log(span.offsetWidth);
+          console.log(baseline.offsetWidth);
+
+          return Math.abs(span.offsetWidth - baseline.offsetWidth) > 2;
+        }
+
+        updatePreviews() {
+          document.querySelectorAll(".font-preview").forEach((preview) => {
+            preview.textContent = this.previewText;
+          });
+        }
+      }
+
+      window.onload = new Browser();
+    </script>
+  </body>
+</html>
