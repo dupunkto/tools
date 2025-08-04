@@ -1,0 +1,5 @@
+name: tools
+host: nov
+type: static
+src: .
+target: /volume1/www/dupunkto.org/tools

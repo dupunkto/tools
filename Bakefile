@@ -7,6 +7,5 @@ serve() {
 }
 
 deploy() {
-  $DEPLOY . s11:domains/$DOMAIN/public_html/tools
-  $DEPLOY . nov:/volume1/www/$DOMAIN/tools
+  lift deploy
 }
