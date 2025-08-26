@@ -1,5 +1,5 @@
 name: tools
-host: nov
 type: static
+host: nov
 src: .
-target: /volume1/www/dupunkto.org/tools
+target: dupunkto.org/tools

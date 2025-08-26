@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DOMAIN=dupunkto.org
-
 serve() {
   waiter --dev
 }
