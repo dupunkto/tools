@@ -2,4 +2,4 @@ name: tools
 type: static
 host: nov
 src: .
-target: dupunkto.org/tools
+target: tools.dupunkto.org
