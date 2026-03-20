@@ -64,7 +64,7 @@
     </main>
 
     <script type="module">
-      import { v4, v6 } from 'https://unpkg.com/uuid@10.0.0/dist/esm-browser/index.js';
+      import { v4, v6 } from '/vendor/uuid/index.js';
 
       document.getElementById("v4").style.display = "block";
       document.getElementById("v6").style.display = "block";
@@ -86,6 +86,6 @@
       generate();
     </script>
 
-    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script> 
+    <script src="/vendor/instant-page.js" type="module"></script> 
   </body>
 </html>

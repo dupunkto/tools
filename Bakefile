@@ -1,5 +1,26 @@
 #!/bin/bash
 
+setup() {
+  bun i
+}
+
+vendor() {
+  mkdir -p vendor
+
+  cp node_modules/instant.page/instantpage.js                                       vendor/instant-page.js
+  cp node_modules/@jaames/iro/dist/iro.js                                           vendor/iro.js
+  cp node_modules/cronstrue/dist/cronstrue.js                                       vendor/cronstrue.js
+  cp node_modules/prettier/standalone.js                                            vendor/prettier.js
+  cp node_modules/prettier/plugins/babel.js                                         vendor/prettier-babel.js
+  cp node_modules/prettier/plugins/estree.js                                        vendor/prettier-estree.js
+  cp node_modules/prettier/plugins/postcss.js                                       vendor/prettier-postcss.js
+  cp node_modules/prettier/plugins/html.js                                          vendor/prettier-html.js
+  cp node_modules/terser/dist/bundle.min.js                                         vendor/terser.js
+  cp node_modules/csso/dist/csso.js                                                 vendor/csso.js
+  cp node_modules/html-minifier-terser/dist/htmlminifier.umd.bundle.min.js          vendor/html-minifier.js
+  cp -r node_modules/uuid/dist/esm-browser                                          vendor/uuid
+}
+
 serve() {
   waiter --dev
 }
