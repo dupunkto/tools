@@ -2,6 +2,7 @@
 
 setup() {
   bun i
+  vendor
 }
 
 vendor() {
