@@ -3,3 +3,5 @@ type: static
 host: nov
 src: .
 target: tools.dupunkto.org
+exclude:
+- node_modules
