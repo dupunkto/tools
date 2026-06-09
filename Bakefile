@@ -20,10 +20,32 @@ vendor() {
   cp node_modules/csso/dist/csso.js                                                 vendor/csso.js
   cp node_modules/html-minifier-terser/dist/htmlminifier.umd.bundle.min.js          vendor/html-minifier.js
   cp -r node_modules/uuid/dist/esm-browser                                          vendor/uuid
+  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.mjs    vendor/
+  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.wasm   vendor/
+
+  bun build --target browser --format esm node_modules/@huggingface/transformers/dist/transformers.web.js --outfile vendor/transformers.js >/dev/null
 }
 
 serve() {
   waiter --dev
+}
+
+precache() {
+  {
+    find . -maxdepth 1 -name "*.html"
+    find . -maxdepth 1 -name "*.css"
+    find . -maxdepth 1 -name "*.json"
+    find . -maxdepth 1 -name "*.js" ! -name "sw.js"
+    find ./vendor -type f
+  } | sort | sed "s|^\./|/|; s|.*|  '&',|" > .precache.tmp
+
+  awk '
+    /^const PRECACHE = \[/ { print; in_block=1; while ((getline line < ".precache.tmp") > 0) print line; next }
+    /^\];/ && in_block { in_block=0 }
+    !in_block { print }
+  ' sw.js > .sw.tmp && mv .sw.tmp sw.js
+
+  rm .precache.tmp
 }
 
 deploy() {
