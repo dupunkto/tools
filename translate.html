@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Translate</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <style>
+      #loading progress {
+        width: 16em;
+        margin-top: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Translate</h2>
+        <div class="group">
+          <select id="direction">
+            <option value="en-nl">English &rarr; Dutch</option>
+            <option value="nl-en">Dutch &rarr; English</option>
+          </select>
+          <button id="switch" type="button">Switch</button>
+        </div>
+      </header>
+
+      <div class="placeholder-text" id="loading">
+        <p id="loading-label">Downloading translation models...</p>
+        <progress id="loading-bar" value="0" max="100"></progress>
+      </div>
+
+      <div id="ui" hidden>
+        <textarea id="input" placeholder="Enter text..." rows="7"></textarea>
+        <textarea id="output" readonly placeholder="Translation..." rows="7" style="margin-top: 0.5em;"></textarea>
+      </div>
+    </main>
+
+    <script type="module">
+      import { pipeline, env } from '/vendor/transformers.js';
+
+      env.backends.onnx.wasm.wasmPaths = '/vendor/';
+
+      const MODELS = {
+        'en-nl': 'Xenova/opus-mt-en-nl',
+        'nl-en': 'Xenova/opus-mt-nl-en',
+      };
+
+      const loading = document.getElementById('loading');
+      const loadingLabel = document.getElementById('loading-label');
+      const loadingBar = document.getElementById('loading-bar');
+      const ui = document.getElementById('ui');
+      const direction = document.getElementById('direction');
+      const input = document.getElementById('input');
+      const output = document.getElementById('output');
+
+      let translator = null;
+      let debounceTimer = null;
+      let loadGen = 0;
+
+      async function loadModel() {
+        const gen = ++loadGen;
+        translator = null;
+        loading.hidden = false;
+        ui.hidden = true;
+        loadingBar.hidden = true;
+        loadingBar.value = 0;
+        loadingLabel.textContent = 'Loading model...';
+
+        const fileProgress = {};
+
+        const result = await pipeline('translation', MODELS[direction.value], {
+          progress_callback: ({ status, file, progress }) => {
+            if (gen !== loadGen) return;
+            if (status == 'progress' && file) {
+              loadingLabel.textContent = 'Downloading translation models...';
+              loadingBar.hidden = false;
+              fileProgress[file] = progress;
+              const values = Object.values(fileProgress);
+              loadingBar.value = values.reduce((a, b) => a + b, 0) / values.length;
+            }
+          },
+        });
+
+        if (gen !== loadGen) return;
+        translator = result;
+        loading.hidden = true;
+        ui.hidden = false;
+        input.focus();
+      }
+
+      async function translate() {
+        if (!translator || !input.value.trim()) {
+          output.value = '';
+          return;
+        }
+        const result = await translator(input.value);
+        output.value = result[0].translation_text;
+      }
+
+      direction.onchange = () => loadModel().then(translate);
+
+      input.oninput = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(translate, 400);
+      };
+
+      document.getElementById('switch').onclick = () => {
+        direction.value = direction.value == 'en-nl' ? 'nl-en' : 'en-nl';
+        const tmp = input.value;
+        input.value = output.value;
+        output.value = tmp;
+        loadModel().then(translate);
+      };
+
+      loadModel();
+    </script>
+
+    <script src="/vendor/instant-page.js" type="module"></script>
+  </body>
+</html>
