@@ -30,6 +30,11 @@ serve() {
   waiter --dev
 }
 
+clean() {
+  rm -rf node_modules
+  rm -rf vendor
+}
+
 precache() {
   {
     find . -maxdepth 1 -name "*.html"
