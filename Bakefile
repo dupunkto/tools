@@ -37,15 +37,20 @@ precache() {
     find . -maxdepth 1 -name "*.json"
     find . -maxdepth 1 -name "*.js" ! -name "sw.js"
     find ./vendor -type f
-  } | sort | sed "s|^\./|/|; s|.*|  '&',|" > .precache.tmp
+  } | sort > .listing.tmp
 
-  awk '
+  CACHE_HASH=$(xargs cat < .listing.tmp | openssl dgst -sha1 | awk '{print $NF}' | cut -c1-8)
+
+  sed "s|^\./|/|; s|.*|  '&',|" .listing.tmp > .precache.tmp
+
+  awk -v hash="tools-${CACHE_HASH}" '
+    /^const CACHE_KEY = / { q=sprintf("%c", 39); print "const CACHE_KEY = " q hash q ";"; next }
     /^const PRECACHE = \[/ { print; in_block=1; while ((getline line < ".precache.tmp") > 0) print line; next }
     /^\];/ && in_block { in_block=0 }
     !in_block { print }
   ' sw.js > .sw.tmp && mv .sw.tmp sw.js
 
-  rm .precache.tmp
+  rm .listing.tmp .precache.tmp
 }
 
 deploy() {
