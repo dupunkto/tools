@@ -19,25 +19,24 @@
         font-family: monospace;
       }
 
-      iframe {
-        width: 100%;
-        min-height: 250px;
-        border: 1px solid;
-      }
-
       select {
         width: fit-content;
         flex-shrink: 1;
+      }
+
+      iframe {
+        width: 100%;
+        min-height: 250px;
       }
 
       #source {
         white-space: pre-wrap;
         word-break: break-word;
         font-family: monospace;
-      }
-
-      [hidden] {
-        display: none;
+        height: 250px;
+        overflow-y: auto;
+        margin-top: 0;
+        border: 1px solid light-dark(#dedede ,#3d3d3d);
       }
     </style>
   </head>
