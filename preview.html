@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>HTML preview</title>
+    <title>HTML</title>
     <link rel="stylesheet" type="text/css" href="main.css">
 
     <style>
@@ -30,12 +30,12 @@
 
     <main>
       <header class="bar">
-        <h2>HTML preview</h2>
+        <h2>HTML</h2>
       </header>
 
       <h3>Input</h3>
 
-      <textarea placeholder="Type something..." rows="10" cols="50" id="htmlInput"></textarea>
+      <textarea placeholder="<h1>hello world</h1>" rows="10" cols="50" id="source"></textarea>
 
       <h3>Preview</h3>
 
@@ -47,7 +47,7 @@
     </main>
 
     <script>
-      const textarea = document.getElementById("htmlInput");
+      const textarea = document.getElementById("source");
       const iframe = document.getElementById("preview");
 
       textarea.addEventListener("input", () => {

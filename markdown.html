@@ -49,14 +49,14 @@
       <header class="bar">
         <h2>Markdown</h2>
         <select id="mode">
-          <option value="source" selected>View source</option>
+          <option value="source" selected>Convert</option>
           <option value="preview">Preview</option>
         </select>
       </header>
 
       <h3>Input</h3>
 
-      <textarea placeholder="# Hello" rows="10" cols="50" id="input"></textarea>
+      <textarea placeholder="# hello world" rows="10" cols="50" id="input"></textarea>
 
       <h3>Output</h3>
 
@@ -73,6 +73,7 @@
       const mode = document.getElementById("mode");
       const preview = document.getElementById("preview");
       const source = document.getElementById("source");
+      const heading = document.querySelector("h3");
 
       function render() {
         const html = marked.parse(input.value);
@@ -81,10 +82,12 @@
           source.value = html;
           source.hidden = false;
           preview.hidden = true;
+          heading.innerText = "Output";
         } else {
           preview.srcdoc = html;
           preview.hidden = false;
           source.hidden = true;
+          heading.innerText = "Preview";
         }
       }
 
