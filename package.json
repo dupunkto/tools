@@ -1,13 +1,14 @@
 {
   "name": "tools",
   "private": true,
-"dependencies": {
+  "dependencies": {
     "@huggingface/transformers": "^3",
     "@jaames/iro": "^5",
     "cronstrue": "^2.50.0",
     "csso": "^5.0.3",
     "html-minifier-terser": "^7.0.0",
     "instant.page": "^5.2.0",
+    "marked": "^18.0.5",
     "prettier": "^3.3.3",
     "terser": "^5.10.0",
     "uuid": "^10.0.0"

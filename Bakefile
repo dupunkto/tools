@@ -11,6 +11,7 @@ vendor() {
   cp node_modules/instant.page/instantpage.js                                       vendor/instant-page.js
   cp node_modules/@jaames/iro/dist/iro.js                                           vendor/iro.js
   cp node_modules/cronstrue/dist/cronstrue.js                                       vendor/cronstrue.js
+  cp node_modules/marked/lib/marked.umd.js                                          vendor/marked.js
   cp node_modules/prettier/standalone.js                                            vendor/prettier.js
   cp node_modules/prettier/plugins/babel.js                                         vendor/prettier-babel.js
   cp node_modules/prettier/plugins/estree.js                                        vendor/prettier-estree.js
