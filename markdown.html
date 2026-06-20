@@ -58,7 +58,7 @@
 
       <textarea placeholder="# hello world" rows="10" cols="50" id="input"></textarea>
 
-      <h3>Output</h3>
+      <h3 id="heading">Output</h3>
 
       <iframe id="preview" hidden></iframe>
       <textarea id="source" rows="10" cols="50" readonly></textarea>
@@ -73,7 +73,7 @@
       const mode = document.getElementById("mode");
       const preview = document.getElementById("preview");
       const source = document.getElementById("source");
-      const heading = document.querySelector("h3");
+      const heading = document.getElementById("heading");
 
       function render() {
         const html = marked.parse(input.value);
