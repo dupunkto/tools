@@ -98,20 +98,10 @@
           progress_callback: onProgress,
         });
 
-        // RMBG-1.4 ships no preprocessor config, so spell it out.
+        // RMBG-1.4 ships no preprocessor config,
+        // but it is being written by `bake vendor` for *reasons*.
         processor = await AutoProcessor.from_pretrained(MODEL, {
-          config: {
-            do_normalize: true,
-            do_pad: false,
-            do_rescale: true,
-            do_resize: true,
-            image_mean: [0.5, 0.5, 0.5],
-            image_std: [1, 1, 1],
-            feature_extractor_type: 'ImageFeatureExtractor',
-            resample: 2,
-            rescale_factor: 0.00392156862745098,
-            size: { width: 1024, height: 1024 },
-          },
+          progress_callback: onProgress,
         });
 
         loading.hidden = true;
