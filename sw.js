@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-4573dea1';
+const CACHE_KEY = 'tools-6edc13cb';
 
 const PRECACHE = [
   '/base64.html',
@@ -45,6 +45,7 @@ const PRECACHE = [
   '/vendor/prettier-babel.js',
   '/vendor/prettier-estree.js',
   '/vendor/prettier-html.js',
+  '/vendor/prettier-markdown.js',
   '/vendor/prettier-postcss.js',
   '/vendor/prettier.js',
   '/vendor/terser.js',

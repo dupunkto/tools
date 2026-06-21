@@ -19,6 +19,7 @@ vendor() {
   cp node_modules/prettier/plugins/estree.js                                        vendor/prettier-estree.js
   cp node_modules/prettier/plugins/postcss.js                                       vendor/prettier-postcss.js
   cp node_modules/prettier/plugins/html.js                                          vendor/prettier-html.js
+  cp node_modules/prettier/plugins/markdown.js                                      vendor/prettier-markdown.js
   cp node_modules/terser/dist/bundle.min.js                                         vendor/terser.js
   cp node_modules/csso/dist/csso.js                                                 vendor/csso.js
   cp node_modules/html-minifier-terser/dist/htmlminifier.umd.bundle.min.js          vendor/html-minifier.js

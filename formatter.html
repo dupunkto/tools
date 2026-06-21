@@ -13,6 +13,7 @@
     <script src="/vendor/prettier-estree.js"></script>
     <script src="/vendor/prettier-postcss.js"></script>
     <script src="/vendor/prettier-html.js"></script>
+    <script src="/vendor/prettier-markdown.js"></script>
     <script src="/vendor/terser.js"></script>
     <script src="/vendor/csso.js"></script>
     <script src="/vendor/html-minifier.js"></script>
@@ -44,6 +45,7 @@
           <option value="babel" selected>JavaScript</option>
           <option value="html">HTML</option>
           <option value="css">CSS</option>
+          <option value="markdown">Markdown</option>
         </select>
       </header>
 
@@ -104,6 +106,9 @@
               minified = csso.minify(code);
               textarea.value = minified.css;
               break;
+
+            default:
+              alert(`No minifier available for ${parser}.`);
           }
         } catch(e) {
           alert(`Error: ${e.message}`);
