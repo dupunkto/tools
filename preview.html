@@ -8,8 +8,14 @@
     <title>HTML</title>
     <link rel="stylesheet" type="text/css" href="main.css">
 
+    <script src="/vendor/prettier.js"></script>
+    <script src="/vendor/prettier-html.js"></script>
+    <script src="/vendor/prettier-babel.js"></script>
+    <script src="/vendor/prettier-estree.js"></script>
+    <script src="/vendor/prettier-postcss.js"></script>
+
     <style>
-      h3 {
+      header + .bar, h3 {
         margin-bottom: 0.5em;
       }
 
@@ -33,7 +39,10 @@
         <h2>HTML</h2>
       </header>
 
-      <h3>Input</h3>
+      <div class="bar">
+        <h3>Input</h3>
+        <button onclick="format()">Format</button>
+      </div>
 
       <textarea placeholder="<h1>hello world</h1>" rows="10" cols="50" id="source"></textarea>
 
@@ -53,6 +62,18 @@
       textarea.addEventListener("input", () => {
         iframe.srcdoc = textarea.value;
       })
+
+      async function format() {
+        try {
+          textarea.value = await prettier.format(textarea.value, {
+            parser: 'html',
+            plugins: prettierPlugins
+          });
+          iframe.srcdoc = textarea.value;
+        } catch(e) {
+          alert(`Error: ${e.message}`);
+        }
+      }
     </script>
 
     <script src="/vendor/instant-page.js" type="module"></script>

@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-6edc13cb';
+const CACHE_KEY = 'tools-85e9158d';
 
 const PRECACHE = [
   '/base64.html',
