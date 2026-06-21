@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Remove background</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <style>
+      #loading progress {
+        width: 16em;
+        margin-top: 0.5em;
+      }
+
+      #result {
+        max-width: 100%;
+        background-image:
+          conic-gradient(#bbb 25%, transparent 0 50%, #bbb 0 75%, transparent 0);
+        background-size: 1.25em 1.25em;
+        background-repeat: repeat;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Remove background</h2>
+      </header>
+
+      <div class="placeholder-text" id="loading">
+        <p id="loading-label">Loading model...</p>
+        <progress id="loading-bar" value="0" max="100" hidden></progress>
+      </div>
+
+      <input type="file" id="file" accept="image/*" hidden />
+
+      <div class="placeholder-text" id="status" hidden>
+        <p>Removing background...</p>
+      </div>
+
+      <header class="bar" id="heading" hidden>
+        <h3>Result</h3>
+        <div class="group">
+          <button id="download" type="button">Download</button>
+        </div>
+      </header>
+      <img id="result" hidden alt="Result" />
+    </main>
+
+    <script type="module">
+      import { AutoModel, AutoProcessor, RawImage, env } from '/vendor/transformers.js';
+
+      env.backends.onnx.wasm.wasmPaths = '/vendor/';
+      // Load only the vendored weights, never reach out to the HuggingFace.
+      env.allowLocalModels = true;
+      env.allowRemoteModels = false;
+      env.localModelPath = '/vendor/models/';
+
+      const MODEL = 'briaai/RMBG-1.4';
+
+      const loading = document.getElementById('loading');
+      const loadingLabel = document.getElementById('loading-label');
+      const loadingBar = document.getElementById('loading-bar');
+      const status = document.getElementById('status');
+      const heading = document.getElementById('heading');
+      const result = document.getElementById('result');
+      const file = document.getElementById('file');
+      const download = document.getElementById('download');
+
+      let model = null;
+      let processor = null;
+
+      async function loadModel() {
+        const fileProgress = {};
+
+        const onProgress = ({ status, file, progress }) => {
+          if (status != 'progress' || !file) return;
+          loadingBar.hidden = false;
+          fileProgress[file] = progress;
+          const values = Object.values(fileProgress);
+          loadingBar.value = values.reduce((a, b) => a + b, 0) / values.length;
+        };
+
+        model = await AutoModel.from_pretrained(MODEL, {
+          config: { model_type: 'custom' },
+          dtype: 'q8', // keep in sync with the vendored variant in the Bakefile
+          progress_callback: onProgress,
+        });
+
+        // RMBG-1.4 ships no preprocessor config, so spell it out.
+        processor = await AutoProcessor.from_pretrained(MODEL, {
+          config: {
+            do_normalize: true,
+            do_pad: false,
+            do_rescale: true,
+            do_resize: true,
+            image_mean: [0.5, 0.5, 0.5],
+            image_std: [1, 1, 1],
+            feature_extractor_type: 'ImageFeatureExtractor',
+            resample: 2,
+            rescale_factor: 0.00392156862745098,
+            size: { width: 1024, height: 1024 },
+          },
+        });
+
+        loading.hidden = true;
+        file.hidden = false;
+      }
+
+      async function removeBackground(url) {
+        heading.hidden = true;
+        result.hidden = true;
+        status.hidden = false;
+        file.hidden = true;
+
+        const image = await RawImage.fromURL(url);
+        const { pixel_values } = await processor(image);
+        const { output } = await model({ input: pixel_values });
+
+        const mask = await RawImage.fromTensor(
+          output[0].mul(255).to('uint8')
+        ).resize(image.width, image.height);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(image.toCanvas(), 0, 0);
+
+        const pixels = ctx.getImageData(0, 0, image.width, image.height);
+        for (let i = 0; i < mask.data.length; ++i)
+          pixels.data[4 * i + 3] = mask.data[i];
+        ctx.putImageData(pixels, 0, 0);
+
+        result.src = canvas.toDataURL('image/png');
+        heading.hidden = false;
+        result.hidden = false;
+        status.hidden = true;
+        file.value = '';
+        file.hidden = false;
+      }
+
+      function handleFile(f) {
+        if (!f || !f.type.startsWith('image/')) return;
+        const url = URL.createObjectURL(f);
+        removeBackground(url).finally(() => URL.revokeObjectURL(url));
+      }
+
+      file.onchange = () => handleFile(file.files[0]);
+
+      download.onclick = () => {
+        const a = document.createElement('a');
+        a.href = result.src;
+        a.download = 'cutout.png';
+        a.click();
+      };
+
+      loadModel();
+    </script>
+
+    <script src="/vendor/instant-page.js" type="module"></script>
+  </body>
+</html>

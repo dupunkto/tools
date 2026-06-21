@@ -48,6 +48,10 @@
       import { pipeline, env } from '/vendor/transformers.js';
 
       env.backends.onnx.wasm.wasmPaths = '/vendor/';
+      // Load only the vendored weights; never reach out to the HF hub.
+      env.allowLocalModels = true;
+      env.allowRemoteModels = false;
+      env.localModelPath = '/vendor/models/';
 
       const MODELS = {
         'en-nl': 'Xenova/opus-mt-en-nl',
@@ -78,6 +82,7 @@
         const fileProgress = {};
 
         const result = await pipeline('translation', MODELS[direction.value], {
+          dtype: 'q8', // keep in sync with the vendored variant in the Bakefile
           progress_callback: ({ status, file, progress }) => {
             if (gen !== loadGen) return;
             if (status == 'progress' && file) {

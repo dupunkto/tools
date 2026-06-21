@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-31f063fd';
+const CACHE_KEY = 'tools-a4ca4a05';
 
 const PRECACHE = [
   '/base64.html',
@@ -18,6 +18,7 @@ const PRECACHE = [
   '/package.json',
   '/palette.html',
   '/preview.html',
+  '/remove.html',
   '/translate.html',
   '/uuid.html',
   '/vendor/cronstrue.js',
@@ -26,6 +27,19 @@ const PRECACHE = [
   '/vendor/instant-page.js',
   '/vendor/iro.js',
   '/vendor/marked.js',
+  '/vendor/models/Xenova/opus-mt-en-nl/config.json',
+  '/vendor/models/Xenova/opus-mt-en-nl/onnx/decoder_model_merged_quantized.onnx',
+  '/vendor/models/Xenova/opus-mt-en-nl/onnx/encoder_model_quantized.onnx',
+  '/vendor/models/Xenova/opus-mt-en-nl/tokenizer.json',
+  '/vendor/models/Xenova/opus-mt-en-nl/tokenizer_config.json',
+  '/vendor/models/Xenova/opus-mt-nl-en/config.json',
+  '/vendor/models/Xenova/opus-mt-nl-en/onnx/decoder_model_merged_quantized.onnx',
+  '/vendor/models/Xenova/opus-mt-nl-en/onnx/encoder_model_quantized.onnx',
+  '/vendor/models/Xenova/opus-mt-nl-en/tokenizer.json',
+  '/vendor/models/Xenova/opus-mt-nl-en/tokenizer_config.json',
+  '/vendor/models/briaai/RMBG-1.4/config.json',
+  '/vendor/models/briaai/RMBG-1.4/onnx/model_quantized.onnx',
+  '/vendor/models/briaai/RMBG-1.4/preprocessor_config.json',
   '/vendor/ort-wasm-simd-threaded.jsep.mjs',
   '/vendor/ort-wasm-simd-threaded.jsep.wasm',
   '/vendor/prettier-babel.js',

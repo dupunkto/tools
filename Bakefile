@@ -8,6 +8,8 @@ setup() {
 vendor() {
   mkdir -p vendor
 
+  echo "==> Copying prebuilt browser bundles"
+
   cp node_modules/instant.page/instantpage.js                                       vendor/instant-page.js
   cp node_modules/@jaames/iro/dist/iro.js                                           vendor/iro.js
   cp node_modules/cronstrue/dist/cronstrue.js                                       vendor/cronstrue.js
@@ -24,7 +26,53 @@ vendor() {
   cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.mjs    vendor/
   cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.wasm   vendor/
 
+  echo "==> Building other browser bundles"
+
   bun build --target browser --format esm node_modules/@huggingface/transformers/dist/transformers.web.js --outfile vendor/transformers.js >/dev/null
+
+  echo "==> Downloading image models"
+
+  # Keep this in sync with `dtype` in remove.html and translate.html
+  ONNX=model_quantized.onnx    # q8,   ~44MB
+  
+  # Better models:
+  # ONNX=model_fp16.onnx       # fp16, ~88MB
+  # ONNX=model.onnx            # fp32, ~176MB
+
+  mkdir -p vendor/models/briaai/RMBG-1.4/onnx
+
+  fetch https://huggingface.co/briaai/RMBG-1.4/resolve/main/config.json \
+    vendor/models/briaai/RMBG-1.4/config.json
+  fetch "https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/$ONNX" \
+    "vendor/models/briaai/RMBG-1.4/onnx/$ONNX"
+
+  cat > vendor/models/briaai/RMBG-1.4/preprocessor_config.json <<'EOF'
+{
+  "feature_extractor_type": "ImageFeatureExtractor",
+  "do_normalize": true,
+  "do_pad": false,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [0.5, 0.5, 0.5],
+  "image_std": [1, 1, 1],
+  "resample": 2,
+  "rescale_factor": 0.00392156862745098,
+  "size": { "width": 1024, "height": 1024 }
+}
+EOF
+
+  echo "==> Downloading translation models"
+
+  for model in Xenova/opus-mt-en-nl Xenova/opus-mt-nl-en; do
+    mkdir -p "vendor/models/$model/onnx"
+
+    for file in config.json tokenizer.json tokenizer_config.json \
+                onnx/encoder_model_quantized.onnx \
+                onnx/decoder_model_merged_quantized.onnx; do
+      fetch "https://huggingface.co/$model/resolve/main/$file" \
+        "vendor/models/$model/$file"
+    done
+  done
 }
 
 serve() {
@@ -61,4 +109,12 @@ precache() {
 
 deploy() {
   lift deploy
+}
+
+fetch() {
+  if [ -f "$2" ]; then
+    echo "Skipped $2"
+  else
+    curl -fL --progress-bar "$1" -o "$2"
+  fi
 }
