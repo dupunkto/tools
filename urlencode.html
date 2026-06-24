@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>URL encoding</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <style>
+      .split {
+        margin-top: 0.5em;
+      }
+
+      textarea {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>URL encoding</h2>
+      </header>
+
+      <textarea placeholder="Type something..." rows="10" cols="50"></textarea>
+
+      <div class="split">
+        <button onclick="encode()">Encode</button>
+        <button onclick="decode()">Decode</button>
+      </div>
+
+      <noscript>
+        <small>This tool requires Javascript to work.</small>
+      </noscript>
+    </main>
+
+    <script>
+      const textarea = document.querySelector("textarea");
+
+      function encode() {
+        textarea.value = encodeURIComponent(textarea.value);
+      }
+
+      function decode() {
+        try {
+          textarea.value = decodeURIComponent(textarea.value);
+        } catch(e) {
+          alert("Error: invalid percent-encoded input.");
+        }
+      }
+    </script>
+
+    <script src="/vendor/instant-page.js" type="module"></script>
+    <script src="/offline.js"></script>
+  </body>
+</html>
