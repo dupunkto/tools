@@ -1,5 +1,11 @@
 #!/bin/bash
 
+build() {
+  setup
+  vendor
+  precache
+}
+
 setup() {
   bun i
   vendor
