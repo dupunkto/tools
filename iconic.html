@@ -60,21 +60,20 @@
 
     <script>
       const graphemes = {
-        ɑ: "a",
-        ʌ: "ä",
-        ɔ: "c",
-        ɔ: "ö",
-        λ: "é",
-        э: "ë",
-        ʊ: "ú",
-        ɤ: "ü",
-        Σ: "z",
-        σ: "q",
-        ţ: "T",
-        ȿ: "S",
-        ʟ: "l",
-        μ: "j",
-        ω: "w",
+        ɑ: ["a"],
+        ʌ: ["ä"],
+        ɔ: ["c", "ö"],
+        λ: ["é"],
+        э: ["ë"],
+        ʊ: ["ú"],
+        ɤ: ["ü"],
+        Σ: ["z"],
+        σ: ["q"],
+        ţ: ["T"],
+        ȿ: ["S"],
+        ʟ: ["l"],
+        μ: ["j"],
+        ω: ["w"],
       };
 
       const table = document.querySelector("table");
@@ -87,7 +86,7 @@
         const cell1 = document.createElement("td");
 
         cell0.innerText = grapheme;
-        cell1.innerText = graphemes[grapheme];
+        cell1.innerText = graphemes[grapheme].join(", ");
 
         row.appendChild(cell0);
         row.appendChild(cell1);
@@ -95,9 +94,14 @@
         table.appendChild(row);
       }
 
-      const replacements = Object.fromEntries(
-        Object.entries(graphemes).map(([key, value]) => [value, key])
-      );
+      const replacements = {};
+      for (const [grapheme, keys] of Object.entries(graphemes)) {
+        for (const key of keys) {
+          replacements[key] = grapheme;
+          const upper = key.toUpperCase();
+          if (upper !== key) replacements[upper] = grapheme;
+        }
+      }
 
       input.oninput = () => {
         output.value = input.value;
