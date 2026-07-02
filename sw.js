@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-d2317127';
+const CACHE_KEY = 'tools-72dd7ff7';
 
 const PRECACHE = [
   '/',
@@ -19,6 +19,7 @@ const PRECACHE = [
   '/package.json',
   '/palette.html',
   '/preview.html',
+  '/pronounce.html',
   '/remove.html',
   '/translate.html',
   '/urldecode.html',

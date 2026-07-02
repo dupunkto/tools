@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Pronounce</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css" />
+  </head>
+  <body>
+    <header>
+      <h1><a href="index.html">Tools</a></h1>
+    </header>
+
+    <main>
+      <header class="bar">
+        <h2>Pronounce</h2>
+        <div class="group">
+          <button id="speak" type="button">Speak</button>
+        </div>
+      </header>
+
+      <textarea
+        id="input"
+        placeholder="xɑ ryted tэku эt ɑsy..."
+        rows="7"
+      >hλ ωʊd</textarea>
+    </main>
+
+    <script type="module">
+      // Σkɔnik is 1:1 phonetic, so "speaking" a word is just concatenating one
+      // audio clip per grapheme. Decode the clips once with the Web Audio API,
+      // then schedule them back-to-back on demand. No network at play time.
+      //
+      // The clips are placeholders (macOS `say` reading approximate syllables),
+      // so several phones are wrong and stops carry a faint schwa. Drop better
+      // recordings into clips/ under the same names and nothing else changes.
+
+      // grapheme (orthography glyph OR its romanisation key) -> clip id
+      const CLIP = {
+        // vowels
+        'ɑ': 'a_open', 'a': 'a_open', 'ʌ': 'a_open', 'ä': 'a_open', // [ɑ]
+        'o': 'o_close',                                             // [o]
+        'ɔ': 'o_open',  'c': 'o_open',  'ö': 'o_open',              // [ɔ]
+        'i': 'i_lax',                                               // [ɪ]
+        'y': 'i_tense',                                             // [i]
+        'Σ': 'ai',      'z': 'ai',                                  // [aj]
+        'e': 'schwa',                                               // [ə]
+        'λ': 'e_mid',   'é': 'e_mid',                               // [e]
+        'э': 'e_open',  'ë': 'e_open',                              // [ɛ]
+        'u': 'y_round',                                             // [y]
+        'ʊ': 'u_close', 'ú': 'u_close',                             // [u]
+        'ɤ': 'o_back',  'ü': 'o_back',                              // [ɤ]
+        'σ': 'au',      'q': 'au',                                  // [aʊ]
+        // consonants
+        'd': 'c_d', 'p': 'c_p', 'm': 'c_m', 'n': 'c_n', 't': 'c_t',
+        'ţ': 'c_ch', 'T': 'c_ch',                                   // [t͡ʃ]
+        's': 'c_s',
+        'ȿ': 'c_sh', 'S': 'c_sh',                                   // [ʂ]
+        'h': 'c_h',                                                 // [ɦ]
+        'g': 'c_g', 'b': 'c_b', 'f': 'c_f', 'v': 'c_v',
+        'ʟ': 'c_l', 'l': 'c_l',                                     // [l]
+        'ω': 'c_w', 'w': 'c_w',                                     // [ʋ]
+        'μ': 'c_j', 'j': 'c_j',                                     // [j]
+        'k': 'c_k',
+        'r': 'c_r',                                                 // [ɻ]
+      };
+
+      const OFFSET = -0.1;        // seconds between phones; slight overlap smooths it
+      const WORD_GAP = 0.12;      // pause on whitespace
+      const COMPOUND_GAP = 0.07;  // shorter pause on a compound hyphen
+
+      const input = document.getElementById('input');
+      const button = document.getElementById('speak');
+
+      let ctx;
+      const buffers = {};
+      let decoding;
+
+      // Runs from a click handler, so creating the context is allowed.
+      function ready() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') ctx.resume();
+        if (!decoding) {
+          const ids = [...new Set(Object.values(CLIP))];
+          decoding = Promise.all(ids.map(async (id) => {
+            const res = await fetch(`clips/${id}.mp3`);
+            buffers[id] = await ctx.decodeAudioData(await res.arrayBuffer());
+          }));
+        }
+        return decoding;
+      }
+
+      async function speak(text) {
+        await ready();
+        let t = ctx.currentTime + 0.05;
+        for (const ch of text) {
+          if (ch === '-') { t += COMPOUND_GAP; continue; }
+          if (/\s/.test(ch)) { t += WORD_GAP; continue; }
+          // Match exactly first: Σ [aj] vs σ [aʊ] and the T/S romanisation keys
+          // are case-distinct, so don't lowercase blindly. Fall back for stray caps.
+          const id = CLIP[ch] ?? CLIP[ch.toLowerCase()];
+          if (!id) continue; // punctuation / unknown glyph
+          const src = ctx.createBufferSource();
+          src.buffer = buffers[id];
+          src.connect(ctx.destination);
+          src.start(Math.max(t, ctx.currentTime));
+          t += buffers[id].duration + OFFSET;
+        }
+      }
+
+      button.onclick = () => speak(input.value);
+    </script>
+
+    <script src="/vendor/instant-page.js" type="module"></script>
+    <script src="/offline.js"></script>
+  </body>
+</html>

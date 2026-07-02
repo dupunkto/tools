@@ -5,3 +5,4 @@ src: .
 target: tools.dupunkto.org
 exclude:
 - node_modules
+- clips
