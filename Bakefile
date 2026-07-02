@@ -102,7 +102,7 @@ precache() {
 
   CACHE_HASH=$(xargs cat < .listing.tmp | openssl dgst -sha1 | awk '{print $NF}' | cut -c1-8)
 
-  sed "s|^\./|/|; s|.*|  '&',|" .listing.tmp > .precache.tmp
+  { printf "  '/',\n"; sed "s|^\./|/|; s|.*|  '&',|" .listing.tmp; } > .precache.tmp
 
   awk -v hash="tools-${CACHE_HASH}" '
     /^const CACHE_KEY = / { q=sprintf("%c", 39); print "const CACHE_KEY = " q hash q ";"; next }

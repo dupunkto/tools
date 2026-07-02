@@ -1,6 +1,7 @@
 const CACHE_KEY = 'tools-d2317127';
 
 const PRECACHE = [
+  '/',
   '/base64.html',
   '/colors.html',
   '/copy.js',
