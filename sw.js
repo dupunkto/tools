@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-e42e60d5';
+const CACHE_KEY = 'tools-050d3f61';
 
 const PRECACHE = [
   '/',

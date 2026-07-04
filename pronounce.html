@@ -19,8 +19,18 @@
         <h2>Pronounce</h2>
         <div class="group">
           <select id="engine">
-            <option value="simple" selected>Simple</option>
-            <option value="espeak">eSpeak</option>
+            <option value="simple">Simple</option>
+            <option value="espeak" selected>eSpeak</option>
+          </select>
+          <select id="voice">
+            <option value="" selected>Default</option>
+            <option value="klatt">Klatt</option>
+            <option value="klatt2">Klatt 2</option>
+            <option value="klatt3">Klatt 3</option>
+            <option value="f3">Female 3</option>
+            <option value="m3">Male 3</option>
+            <option value="whisper">Whisper</option>
+            <option value="croak">Croak</option>
           </select>
           <button id="speak" type="button">Speak</button>
         </div>
@@ -79,6 +89,7 @@
       const input = document.getElementById('input');
       const button = document.getElementById('speak');
       const engine = document.getElementById('engine');
+      const voice = document.getElementById('voice');
 
       let ctx;
 
@@ -128,7 +139,6 @@
 
       const ESPEAK_DIR = '/vendor/espeakng/';
       const ESPEAK_RATE = 22050;
-      const ESPEAK_VOICE = 'zkc+klatt2';
 
       // Seconds of silence after a clause, by its final punctuation mark.
       const GAPS = { '.': 0.8, '?': 0.8, '!': 0.8, ',': 0.3, ';': 0.3, ':': 0.3 };
@@ -142,8 +152,8 @@
         const init = M.cwrap('zkc_init', 'number', []);
         const synth = M.cwrap('zkc_synth', 'number', ['string', 'string']);
         init();
-        espeak = (text) => {
-          const n = synth(text, ESPEAK_VOICE);
+        espeak = (text, voice_name) => {
+          const n = synth(text, voice_name);
           if (n <= 0) return null;
           const p = M._zkc_samples() / 2;
           return M.HEAP16.slice(p, p + n);
@@ -164,13 +174,14 @@
 
       async function speak_espeak(text) {
         const synth = await ensure_espeak();
+        const voice_name = 'zkc' + (voice.value ? '+' + voice.value : '');
         audio_ctx();
         let t = ctx.currentTime + 0.05;
 
         // espeak lowercases input, which collapses Σ into σ; feed it the
         // romanisation instead.
         for (const clause of clauses(text.replace(/Σ/g, 'z'))) {
-          const samples = synth(clause.text);
+          const samples = synth(clause.text, voice_name);
           if (!samples) continue;
           const buf = ctx.createBuffer(1, samples.length, ESPEAK_RATE);
           const data = buf.getChannelData(0);
@@ -182,6 +193,10 @@
           t += buf.duration + clause.gap;
         }
       }
+
+      engine.onchange = () => {
+        voice.hidden = engine.value != 'espeak';
+      };
 
       button.onclick = () => {
         const speak = engine.value == 'espeak' ? speak_espeak : speak_simple;
