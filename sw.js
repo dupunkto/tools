@@ -1,4 +1,4 @@
-const CACHE_KEY = 'tools-72dd7ff7';
+const CACHE_KEY = 'tools-e42e60d5';
 
 const PRECACHE = [
   '/',
@@ -27,6 +27,9 @@ const PRECACHE = [
   '/uuid.html',
   '/vendor/cronstrue.js',
   '/vendor/csso.js',
+  '/vendor/espeakng/espeak.data',
+  '/vendor/espeakng/espeak.js',
+  '/vendor/espeakng/espeak.wasm',
   '/vendor/html-minifier.js',
   '/vendor/instant-page.js',
   '/vendor/iro.js',

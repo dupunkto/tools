@@ -1,5 +1,11 @@
 #!/bin/bash
 
+VENDOR="vendor"
+
+# If this folder does not exist, the build will still
+# work, but the eSpeak engine in /pronounce will not function.
+ESPEAK="$HOME/projects/exp/zkcnik-tts/dist"
+
 build() {
   setup
   vendor
@@ -12,30 +18,37 @@ setup() {
 }
 
 vendor() {
-  mkdir -p vendor
+  mkdir -p $VENDOR
 
   echo "==> Copying prebuilt browser bundles"
 
-  cp node_modules/instant.page/instantpage.js                                       vendor/instant-page.js
-  cp node_modules/@jaames/iro/dist/iro.js                                           vendor/iro.js
-  cp node_modules/cronstrue/dist/cronstrue.js                                       vendor/cronstrue.js
-  cp node_modules/marked/lib/marked.umd.js                                          vendor/marked.js
-  cp node_modules/prettier/standalone.js                                            vendor/prettier.js
-  cp node_modules/prettier/plugins/babel.js                                         vendor/prettier-babel.js
-  cp node_modules/prettier/plugins/estree.js                                        vendor/prettier-estree.js
-  cp node_modules/prettier/plugins/postcss.js                                       vendor/prettier-postcss.js
-  cp node_modules/prettier/plugins/html.js                                          vendor/prettier-html.js
-  cp node_modules/prettier/plugins/markdown.js                                      vendor/prettier-markdown.js
-  cp node_modules/terser/dist/bundle.min.js                                         vendor/terser.js
-  cp node_modules/csso/dist/csso.js                                                 vendor/csso.js
-  cp node_modules/html-minifier-terser/dist/htmlminifier.umd.bundle.min.js          vendor/html-minifier.js
-  cp -r node_modules/uuid/dist/esm-browser                                          vendor/uuid
-  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.mjs    vendor/
-  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.wasm   vendor/
+  cp node_modules/instant.page/instantpage.js                                       $VENDOR/instant-page.js
+  cp node_modules/@jaames/iro/dist/iro.js                                           $VENDOR/iro.js
+  cp node_modules/cronstrue/dist/cronstrue.js                                       $VENDOR/cronstrue.js
+  cp node_modules/marked/lib/marked.umd.js                                          $VENDOR/marked.js
+  cp node_modules/prettier/standalone.js                                            $VENDOR/prettier.js
+  cp node_modules/prettier/plugins/babel.js                                         $VENDOR/prettier-babel.js
+  cp node_modules/prettier/plugins/estree.js                                        $VENDOR/prettier-estree.js
+  cp node_modules/prettier/plugins/postcss.js                                       $VENDOR/prettier-postcss.js
+  cp node_modules/prettier/plugins/html.js                                          $VENDOR/prettier-html.js
+  cp node_modules/prettier/plugins/markdown.js                                      $VENDOR/prettier-markdown.js
+  cp node_modules/terser/dist/bundle.min.js                                         $VENDOR/terser.js
+  cp node_modules/csso/dist/csso.js                                                 $VENDOR/csso.js
+  cp node_modules/html-minifier-terser/dist/htmlminifier.umd.bundle.min.js          $VENDOR/html-minifier.js
+  cp -r node_modules/uuid/dist/esm-browser                                          $VENDOR/uuid
+  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.mjs    $VENDOR/
+  cp node_modules/@huggingface/transformers/dist/ort-wasm-simd-threaded.jsep.wasm   $VENDOR/
+
+  if [ -d "$ESPEAK" ]; then
+    echo "==> Copying espeak wasm bundle"
+
+    mkdir -p $VENDOR/espeakng
+    cp $ESPEAK/espeak.js $ESPEAK/espeak.wasm $ESPEAK/espeak.data $VENDOR/espeakng/
+  fi
 
   echo "==> Building other browser bundles"
 
-  bun build --target browser --format esm node_modules/@huggingface/transformers/dist/transformers.web.js --outfile vendor/transformers.js >/dev/null
+  bun build --target browser --format esm node_modules/@huggingface/transformers/dist/transformers.web.js --outfile $VENDOR/transformers.js >/dev/null
 
   echo "==> Downloading image models"
 
@@ -46,14 +59,14 @@ vendor() {
   # ONNX=model_fp16.onnx       # fp16, ~88MB
   # ONNX=model.onnx            # fp32, ~176MB
 
-  mkdir -p vendor/models/briaai/RMBG-1.4/onnx
+  mkdir -p $VENDOR/models/briaai/RMBG-1.4/onnx
 
   fetch https://huggingface.co/briaai/RMBG-1.4/resolve/main/config.json \
-    vendor/models/briaai/RMBG-1.4/config.json
+    $VENDOR/models/briaai/RMBG-1.4/config.json
   fetch "https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/$ONNX" \
-    "vendor/models/briaai/RMBG-1.4/onnx/$ONNX"
+    "$VENDOR/models/briaai/RMBG-1.4/onnx/$ONNX"
 
-  cat > vendor/models/briaai/RMBG-1.4/preprocessor_config.json <<'EOF'
+  cat > $VENDOR/models/briaai/RMBG-1.4/preprocessor_config.json <<'EOF'
 {
   "feature_extractor_type": "ImageFeatureExtractor",
   "do_normalize": true,
@@ -71,13 +84,13 @@ EOF
   echo "==> Downloading translation models"
 
   for model in Xenova/opus-mt-en-nl Xenova/opus-mt-nl-en; do
-    mkdir -p "vendor/models/$model/onnx"
+    mkdir -p "$VENDOR/models/$model/onnx"
 
     for file in config.json tokenizer.json tokenizer_config.json \
                 onnx/encoder_model_quantized.onnx \
                 onnx/decoder_model_merged_quantized.onnx; do
       fetch "https://huggingface.co/$model/resolve/main/$file" \
-        "vendor/models/$model/$file"
+        "$VENDOR/models/$model/$file"
     done
   done
 }
@@ -88,7 +101,7 @@ serve() {
 
 clean() {
   rm -rf node_modules
-  rm -rf vendor
+  rm -rf $VENDOR
 }
 
 precache() {
@@ -97,7 +110,7 @@ precache() {
     find . -maxdepth 1 -name "*.css"
     find . -maxdepth 1 -name "*.json"
     find . -maxdepth 1 -name "*.js" ! -name "sw.js"
-    find ./vendor -type f
+    find ./$VENDOR -type f
   } | sort > .listing.tmp
 
   CACHE_HASH=$(xargs cat < .listing.tmp | openssl dgst -sha1 | awk '{print $NF}' | cut -c1-8)
