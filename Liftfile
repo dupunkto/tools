@@ -1,6 +1,6 @@
 name: tools
 type: static
-host: nov
+host: nov.dupunk.to
 src: .
 target: tools.dupunkto.org
 exclude:
